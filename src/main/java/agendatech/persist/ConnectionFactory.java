@@ -39,7 +39,6 @@ public class ConnectionFactory {
         									+ "constraint pk_conference primary key (id));";
         
         stat.execute(sql);
-
         stat.close();
     }
     
