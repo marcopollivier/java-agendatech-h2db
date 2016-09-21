@@ -10,17 +10,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import agendatech.model.Conference;
-import agendatech.persist.ConnectionFactory;
 
-public class ConferenceDAO {
+public class ConferenceJdbcDao {
 
 	private Connection conn;
 	
-	public ConferenceDAO() throws ClassNotFoundException, SQLException {
+	public ConferenceJdbcDao() throws ClassNotFoundException, SQLException {
 		conn = ConnectionFactory.getConnection();
 	}
 	
-	public List<Conference> retrieveAll() throws SQLException {
+	public List<Conference> retrieve() throws SQLException {
 		Statement stat = conn.createStatement();
         ResultSet rs;
         rs = stat.executeQuery("select * from conference");
@@ -31,10 +30,6 @@ public class ConferenceDAO {
             conf.setId(rs.getInt("id"));
             conf.setName(rs.getString("name"));
             conf.setContactEmail(rs.getString("contact_email"));
-            conf.setState(rs.getString("state"));
-            conf.setDescription(rs.getString("description"));
-            conf.setStartDate(rs.getDate("start_date"));
-            conf.setEndDate(rs.getDate("end_date"));
             conferences.add(conf);
         }
         stat.close();
@@ -43,16 +38,13 @@ public class ConferenceDAO {
 	}
 	
 	public void create(Conference conference) throws ClassNotFoundException, SQLException, ParseException {
-		String sql = "insert into conference (name, contact_email, state, description, start_date, end_date) values(?, ?, ?, ?, ?, ?);";
+		String sql = "insert into conference (name, contact_email) "
+				   + "values(?, ?);";
 
 		PreparedStatement ps = conn.prepareStatement(sql);
         
         ps.setString(1, conference.getName());
         ps.setString(2, conference.getContactEmail());
-        ps.setString(3, conference.getState());
-        ps.setString(4, conference.getDescription());
-        ps.setDate(5, new java.sql.Date(conference.getStartDate().getTime()));
-        ps.setDate(6, new java.sql.Date(conference.getEndDate().getTime()));
         
         ps.execute();
         ps.close();
@@ -60,25 +52,17 @@ public class ConferenceDAO {
 	
 	public void update(Conference conference) throws SQLException {
 		String sql = "update conference "
-				   + "set name = ?, contact_email = ?, state = ?, description = ?, start_date = ?, end_date = ? "
+				   + "set name = ?, contact_email = ?"
 				   + "where id = ?;";
 
 		PreparedStatement ps = conn.prepareStatement(sql);
         
         ps.setString(1, conference.getName());
         ps.setString(2, conference.getContactEmail());
-        ps.setString(3, conference.getState());
-        ps.setString(4, conference.getDescription());
-        ps.setDate(5, new java.sql.Date(conference.getStartDate().getTime()));
-        ps.setDate(6, new java.sql.Date(conference.getEndDate().getTime()));
         ps.setInt(7, conference.getId());
         
         ps.execute();
         ps.close();		
-	}
-	
-	public void delete(Conference conference) {
-		//TODO 
 	}
 	
 }

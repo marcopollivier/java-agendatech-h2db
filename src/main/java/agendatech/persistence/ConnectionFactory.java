@@ -1,4 +1,4 @@
-package agendatech.persist;
+package agendatech.persistence;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -29,13 +29,9 @@ public class ConnectionFactory {
     private static void createDataStructure() throws SQLException { 
     	Statement stat = conn.createStatement();
         
-        String sql = "create table conference (id integer auto_increment not null, "
+        String sql = "create table if not exists conference (id integer auto_increment not null, "
         									+ "contact_email varchar(255), "
-        									+ "state varchar(2), "
-        									+ "description text, "
         									+ "name varchar(255), "
-        									+ "start_date datetime, "
-        									+ "end_date datetime, "
         									+ "constraint pk_conference primary key (id));";
         
         stat.execute(sql);
